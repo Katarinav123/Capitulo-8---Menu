@@ -27,6 +27,7 @@
             android:background="@color/colorPrimary"
             android:elevation="4dp"
             android:id="@+id/toolbar"
+
             />
         <FrameLayout
             android:layout_width="match_parent"
