@@ -8,7 +8,7 @@
     <item
         android:id="@+id/bottom_profile"
         android:title="Perfil"
-        android:icon="@drawable/icprofile"/>
+        android:icon="@drawable/icuser"/>
 
     <item
         android:title=""
@@ -18,12 +18,11 @@
     <item
         android:id="@+id/bottom_cart"
         android:title="Carrinho"
-        android:icon="@drawable/iccart"/>
+        android:icon="@drawable/iccesta"/>
 
     <item
         android:id="@+id/bottom_menu"
         android:title="Menu"
-        android:icon="@drawable/icmenu"/>
+        android:icon="@drawable/icbar"/>
 
 </menu>
-    </menu>

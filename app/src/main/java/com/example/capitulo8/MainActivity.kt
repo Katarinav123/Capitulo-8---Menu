@@ -1,43 +1,89 @@
 package com.example.capitulo8
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.capitulo8.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+
+    private lateinit var fragmentManager: FragmentManager
     private lateinit var binding: ActivityMainBinding
-    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Hide the status bar.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).hide(WindowInsetsCompat.Type.statusBars())
+
         setSupportActionBar(binding.toolbar)
 
-        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close)
+        val toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close)
         binding.drawerLayout.addDrawerListener(toggle)
-
-        // Sincroniza o item
         toggle.syncState()
-        supportActionBar?.title = "Aplicativo"
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.statusBars())
+        // supportActionBar?.title = ""
+        binding.navigationDrawer.setNavigationItemSelectedListener(this)
 
-        binding.navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_import -> Toast.makeText(this, "Clicou no import", Toast.LENGTH_SHORT).show()
-                R.id.nav_ferramenta -> Toast.makeText(this, "Clicou no tools", Toast.LENGTH_SHORT).show()
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.bottom_home -> openFragment(HomeFragment())
+                R.id.bottom_cart -> openFragment(CartFragment())
+                R.id.bottom_profile -> openFragment(ProfileFragment())
+                R.id.bottom_menu -> openFragment(MenuFragment())
             }
             true
         }
+
+        fragmentManager = supportFragmentManager
+        openFragment(HomeFragment())
+
+        binding.fab.setOnClickListener {
+            Toast.makeText(this, "Categorias", Toast.LENGTH_SHORT).show()
+        }
+
+        onBackPressedDispatcher.addCallback(this){
+            if(binding.drawerLayout.isDrawerOpen(GravityCompat.START)){
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+            }else{
+                finish()
+            }
+        }
+    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.nav_departamentos -> openFragment(PrimeFragment())
+            R.id.nav_pedidos -> openFragment(FashionFragment())
+            R.id.nav_vendidos -> openFragment(ElectronicsFragment())
+            R.id.nav_wallet -> Toast.makeText(this, "Carteira", Toast.LENGTH_SHORT).show()
+            R.id.nav_cupom-> Toast.makeText(this, "Cupom", Toast.LENGTH_SHORT).show()
+            R.id.nav_joia -> Toast.makeText(this,  "Avaliação", Toast.LENGTH_SHORT).show()
+
+        }
+
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+
+    private fun openFragment(fragment: Fragment){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        fragmentTransaction.commit()
     }
 }
